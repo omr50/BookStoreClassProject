@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Inner Page - MyBiz Bootstrap Template</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+
+  <%- include('partials/links') %>
+
+
+  <!-- =======================================================
+  * Template Name: MyBiz
+  * Template URL: https://bootstrapmade.com/mybiz-free-business-bootstrap-theme/
+  * Updated: Mar 17 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <%- include('partials/nav') %>
+  <section>
+  <div class="login-container">
+    <h2>Login</h2>
+    <% if (typeof goodmessage !== 'undefined' && goodmessage) { %>
+      <div class="alert alert-success" role="alert"><%= goodmessage %></div>
+    <% } %>
+
+    <% if (typeof badmessage !== 'undefined' && badmessage) { %>
+      <div class="alert alert-danger" role="alert"><%= badmessage%></div>
+    <% } %>
+
+    <form id="login_form" method="post" action="/auth/login" class="login-form">
+        <div class="input-group">
+            <input type="text" id="username" name="username" placeholder="Enter your username..." required>
+            <label for="username">Username</label>
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" name="password" placeholder="Enter your password..." required>
+            <label for="password">Password</label>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+  </div>
+  </section>
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
