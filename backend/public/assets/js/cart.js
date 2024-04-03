@@ -5,6 +5,7 @@ function addItemToCart(item) {
 }
 
 function getCart() {
+    console.log("THE CART in getCart()", localStorage.getItem('cart'));
     return JSON.parse(localStorage.getItem('cart')) || [];
 }
 
@@ -12,8 +13,10 @@ function updateStorage(title) {
 
 }
 
-function updateCart(stringifiedCart){
+function updateCart(cart){
     // any time we update we want to save to database if authenticated.
+    const cartArray = Array.isArray(cart) ? cart : [];
+    const stringifiedCart = JSON.stringify(cartArray);
     const isLoggedIn = document.cookie.split('; ').some(cookie => cookie.startsWith('isLoggedIn=true'));
     console.log("IS AUTH?", isLoggedIn, document.cookie)
     if (isLoggedIn) {
@@ -69,7 +72,7 @@ books.forEach(row => {
                 <div class="third-col">
                     <p><b>Unit Price:</b> <span class="unit-price">${row.price}</span></p>
                     <p><b>Published:</b> ${row.pubyear}</p>
-                    <p><b>ISBN:</b>${row.isbn}</p>
+                    <p><b>ISBN:</b><span class="book-isbn">${row.isbn}</span></p>
                 </div>
                 
                 <div class="fourth-col">
@@ -131,7 +134,7 @@ books.forEach(row => {
             const stringifiedCart = JSON.stringify(cart);
 // -----------------------------------------------------------------------------------------------------------------------------
             localStorage.setItem('cart', stringifiedCart);
-            updateCart(stringifiedCart);
+            updateCart(cart);
     });
 
         const decrementButton = element.querySelector('.decrement-btn');
@@ -159,7 +162,7 @@ books.forEach(row => {
 // -----------------------------------------------------------------------------------------------------------------------------
                 const stringifiedCart = JSON.stringify(cart);
                 localStorage.setItem('cart', stringifiedCart);
-                updateCart(stringifiedCart);
+                updateCart(cart);
                 console.log("SPLICED")
                 cartEntry.remove();
                 // add a number to the cart based on the length of the cart object.
@@ -194,7 +197,7 @@ books.forEach(row => {
 // -----------------------------------------------------------------------------------------------------------------------------
             const stringifiedCart = JSON.stringify(cart);
             localStorage.setItem('cart', stringifiedCart);
-            updateCart(stringifiedCart);
+            updateCart(cart);
         });
 
         const removeFromCartButton = element.querySelector('.remove-from-cart-btn');
@@ -205,11 +208,14 @@ books.forEach(row => {
             cartEntry.remove();
             // remove from local storage
             const title = cartEntry.querySelector('.book-title').innerText; 
+            const isbn = cartEntry.querySelector('.book-isbn').innerText; 
             const cart = getCart();
-            const newCart = cart.filter(item => item.title !== title);
+            const newCart = cart.filter(item => item.isbn !== isbn);
+            console.log("THE NEW CART IS", newCart);
             const stringifiedCart = JSON.stringify(newCart);
+            console.log("THE NEW STRINGIFIED CART IS", stringifiedCart);
             localStorage.setItem('cart', stringifiedCart);
-            updateCart(stringifiedCart);
+            updateCart(newCart);
             // add a number to the cart based on the length of the cart object.
             cartLink.innerHTML = "cart (" + newCart.length + ")";
         });

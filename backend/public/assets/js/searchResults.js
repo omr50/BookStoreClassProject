@@ -1,4 +1,5 @@
 function addItemToCart(item) {
+    console.log("UNTERMINATED STRING", localStorage.getItem('cart'))
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     cart.push(item);
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -8,8 +9,11 @@ function getCart() {
     return JSON.parse(localStorage.getItem('cart')) || [];
 }
 
-function updateCart(stringifiedCart){
+function updateCart(cart){
     // any time we update we want to save to database if authenticated.
+    const cartArray = Array.isArray(cart) ? cart : [];
+    const stringifiedCart = JSON.stringify(cartArray);
+    console.log("CART BEFORE SAVING", stringifiedCart);
     const isLoggedIn = document.cookie.split('; ').some(cookie => cookie.startsWith('isLoggedIn=true'));
     console.log("IS AUTH?", isLoggedIn, document.cookie)
     if (isLoggedIn) {
@@ -51,7 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
             item.quantity = parseInt(formGroup.querySelector('.quantity').value, 10)
             console.log("QUALITY =", item.quantity)
             addItemToCart(item);
-            updateCart(JSON.stringify(getCart()));
+            console.log("THE CURRENT CART IS", getCart());
+            updateCart(getCart());
             alert('Item added to cart!');
             console.log("ALL ITEMS IN CART", getCart());
             // add a number to the cart based on the length of the cart object.

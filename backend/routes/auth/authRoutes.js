@@ -13,9 +13,10 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/auth/l
     // set cookie
     res.cookie('isLoggedIn', 'true', { secure: true, sameSite: 'Strict' }); // Notice no httpOnly flag
 
-
-    const cartData = JSON.parse(req.body.cart);
-    console.log("GOT CART DATA", cartData);
+    console.log("REQUEST BODY OF THE LOGIN", req.body);
+    // cart is stringified, so json parse it.
+    let cartData = req.body.cart == '' ? [] : JSON.parse(req.body.cart);
+    console.log("GOT CART DATA", cartData, "AND TYPE __", typeof cartData);
 
     const rows = await new Promise((resolve, reject) => {
       console.log("USER IDDDDDD", req.user.id)
@@ -28,11 +29,14 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/auth/l
        })
       });
 
+      console.log("ALL ROWS", rows)
+      let dbCart = [];
       if (rows.length !== 0) {
           console.log("GOT ALL ROWS", rows);
           // compare both
-          const dbCart = JSON.parse(rows[0].cart);
-          console.log("DB CART------------------", dbCart, typeof dbCart)
+          dbCart = JSON.parse(rows[0].cart);
+          console.log("PARSED DB CART", dbCart);
+          console.log("DB CART------------------", dbCart, "_____TYPE__________", typeof dbCart)
           cartData.forEach(localItem => {
           const existsInDb = dbCart.filter(dbItem => dbItem.title === localItem.title);
           if (existsInDb.length === 0) {
@@ -40,7 +44,6 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/auth/l
           }
   });
       await new Promise((resolve, reject) => {
-      console.log("USER IDDDDDD", req.user.id)
       db.query('UPDATE carts SET cart = $1 WHERE user_id = $2', [JSON.stringify(dbCart), req.user.id], (err, result) => {
         if (err) {
             reject(err);
@@ -52,7 +55,6 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/auth/l
       } 
       // if no rows then we can just save the new one directly
       else {
-      console.log("USER IDDDDDD111111111111111111111", req.user.id)
        await new Promise((resolve, reject) => {db.query(`INSERT INTO carts (user_id, cart) VALUES ($1, $2)`, [req.user.id, req.body.cart], (err, result) => {
         if (err) {
           reject(error);
@@ -62,7 +64,6 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/auth/l
        })
         })}
         
-        console.log("INSERTED NEW CART for user", req.user.id);
 
     // merge carts together if user cart already exists
     // if (user cart)
@@ -75,6 +76,7 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/auth/l
         // handle session save error
       }
       const isAuthenticated = true; 
+      cartData = JSON.stringify(dbCart);
       res.render('index', { cartData, isAuthenticated });  // Render after saving session
     });
     // we will have a script tag in which we use ejs to update the cart data dynamically.
@@ -126,14 +128,12 @@ router.post('/signup', async (req, res) =>{
 router.get('/login', (req, res) => {
     const goodmessage = req.query.goodmessage;
     const badmessage = req.query.badmessage;
-    console.log("Message good:", goodmessage, "bad", badmessage)
     res.render('login-page', {goodmessage, badmessage})
 });
 
 router.get('/signup', (req, res) => {
     const goodmessage = req.query.goodmessage;
     const badmessage = req.query.badmessage;
-    console.log("Message good:", goodmessage, "bad", badmessage)
     res.render('signup-page', {goodmessage, badmessage})
 })
 
@@ -149,9 +149,13 @@ router.get('/logout', (req, res, next) => {
 
 router.post('/cart', ensureAuthenticated, async (req, res) => {
     console.log("GET BODY /CART", req.body);
-    const cart = req.body;
+    // WARNING: express.json() parser turns the stringified
+    // json back into json, so we have to manually stringify
+    // it again. 
+    const cart = JSON.stringify(req.body);
+
+    console.log("CART", cart, "_____ITS TYPE IS____", typeof cart)
     await new Promise((resolve, reject) => {
-      console.log("USER IDDDDDD", req.user.id)
       db.query('UPDATE carts SET cart = $1 WHERE user_id = $2', [cart, req.user.id], (err, result) => {
         if (err) {
             reject(err);

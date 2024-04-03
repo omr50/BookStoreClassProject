@@ -95,7 +95,10 @@
   </section><!-- End Hero -->
 
   <main id="main">
-
+    <!-- (INVISIBLE DATA STORE OF THE CART ITEMS) -------------------------------------------------- -->
+    <% if (typeof cartData !== 'undefined' && cartData) { %>
+      <div id="cartData" data-cart='<%- cartData %>' style="display: none;"></div>
+    <% } %>
     
     <!-- ======= Services Section ======= -->
     <section id="services" class="services section-bg">
@@ -317,6 +320,7 @@
           <div class="col-lg-3 col-md-6">
             <div class="footer-info">
               <h3>Team Titan's Bookstore</h3>
+              
               <p>
                 2800 Victory Blvd <br>
                 Staten Island, NY 10314<br><br>
@@ -383,18 +387,10 @@
   </footer><!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-<% if (typeof cart !== 'undefined') { %>
-  <script>
-      const cartData = <%- cart %>; // Assuming `cart` is a JSON string
-      if (cartData) {
-          console.log("FINAL CART UPDATED", cartData);
-          localStorage.setItem('cart', JSON.stringify(cartData));
-      }
-  </script>
-<% } %>
-
 
   <%- include('partials/scripts') %>
+  <%- include('partials/footer') %>
+  <script src="../assets/js/index_page.js"></script>
 
   </body>
 

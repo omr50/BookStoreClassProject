@@ -7,6 +7,8 @@
 // store it back in local storage and then redirect user to home page.
 
 document.getElementById('login_form').addEventListener('submit', function(event) {
-    const cartData = JSON.parse(localStorage.getItem('cart')) || [];
-    document.getElementById('cartData').value = JSON.stringify(cartData);
+    console.log("LOGIN-PAGE CART", localStorage.getItem('cart'))
+    const cartData = localStorage.getItem('cart');
+    document.getElementById('cartData').value = cartData;
+
 });
