@@ -250,7 +250,21 @@ button[type="submit"]:hover {
   border-radius: 5px 5px 5px 5px;
 }
 
-.add-to-cart-btn:hover {
+.checkout-button-div {
+  margin: 10px;
+  text-align: center;
+}
+.checkout-btn {
+  width: 10vh;
+  height: 5vh;
+  background-color: rgb(238, 70, 3);
+  color: white;
+  border: 0px;
+  border-radius: 5px 5px 5px 5px;
+  text-align: center;
+}
+
+.add-to-cart-btn:hover, .checkout-btn:hover {
   background-color: rgb(203, 133, 105);
 }
 /* removing the arrows from number input */

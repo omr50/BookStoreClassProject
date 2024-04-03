@@ -165,5 +165,9 @@ router.post('/cart', ensureAuthenticated, async (req, res) => {
     res.status(200).json({});
 })
 
+
+router.get('/checkout', (req, res) => {
+  res.render('checkout');
+})
 // Export the router
 module.exports = router;
