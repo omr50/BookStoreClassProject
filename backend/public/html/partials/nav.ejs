@@ -38,7 +38,7 @@
               <li><a href="#">Science-Fiction</a></li>
             </ul>
           </li>
-          <li><a class="nav-link scrollto" href="/account">Account</a></li>
+          <li><a class="nav-link scrollto cart-link" href="/cart">Cart</a></li>
             <% if (isAuthenticated) { %>
             <li><a class="nav-link scrollto" href="/auth/logout">Logout</a></li>
             <% } else { %>
@@ -64,6 +64,12 @@
       </nav><!-- .navbar -->
 
     </div>
+    <script>
+      // add a number to the cart based on the length of the cart object.
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartLink = document.querySelector('.cart-link');
+      cartLink.innerHTML = "cart (" + cart.length + ")";
+    </script>
   </header><!-- End Header -->
 
   

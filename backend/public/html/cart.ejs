@@ -37,47 +37,9 @@
     <br>
     <br>
     <br>
-  <h2 class="searched-for">You searched for: <u>'<%= searchTerm%>'</u></h2>
-  <p class="searched-for"><a href="/search">Search again?</a></p>
-    <div class="container">
-      <% if (rows.length > 0) { %>
-        <div class="books-grid">
-          <% rows.forEach(function(row) { %>
-            <div class="book-entry">
-              <h2 class="book-title text-danger" title="<%= row.title %>"><b><%= row.title %></b></h2>
-              <p>by <%= row.author %></p>
-              <img src="<%= row.thumbnail %>" alt="Book Thumbnail" class="book-img">
-              <h3 class="text-primary">$<%= row.price %></h3>
-              <p><b>Published:</b> <%= row.pubyear %></p>
-              <p><b>ISBN:</b><%= row.isbn %></p>
-              <form class="form-group">
-
-              <div class="item">
-                  <button class="decrement-btn">-</button>
-                  <input type="number" id="quantity1" class="quantity" value="1" min="1">
-                  <button class="increment-btn">+</button>
-                  <div>
-                    <button class="add-to-cart-btn" data-item='{"id": 1, "name": "Item 1"}'>Add to Cart</button>
-                  </div>
-              </div>
-
-              </form>
-            </div>
-          <% }); %>
-        </div>
-
-        <div class="navigation">
-          <% if (currentPage > 1) { %>
-            <a href="/search-results?term=<%= searchTerm %>&page=<%= currentPage - 1 %>"><button class="search-button">Previous</button></a>
-          <% } %>
-          <% if (currentPage < totalPages) { %>
-            <a href="/search-results?term=<%= searchTerm %>&page=<%= currentPage + 1 %>"><button class="search-button">Next</button></a>
-          <% } %>
-        </div>
-      <% } else { %>
-        <p>No results found.</p>
-      <% } %>
-      <p>Page <%= currentPage%> of <%= totalPages%></p>
+    <!-- this is where the cart items are put in dynamically -->
+    <h2 class="text-center">Your Cart</h2>
+    <div class="cart-container d-flex flex-column">
     </div>
 </section>
 
@@ -159,7 +121,7 @@
 
   <!-- Template Main JS File -->
   <script src="../assets/js/main.js"></script>
-  <script src="../assets/js/searchResults.js"></script>
+  <script src="../assets/js/cart.js"></script>
 
 </body>
 

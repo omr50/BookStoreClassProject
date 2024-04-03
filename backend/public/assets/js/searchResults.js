@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
             addItemToCart(item);
             alert('Item added to cart!');
             console.log("ALL ITEMS IN CART", getCart());
+            // add a number to the cart based on the length of the cart object.
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartLink = document.querySelector('.cart-link');
+            cartLink.innerHTML = "cart (" + cart.length + ")";
         });
     });
 

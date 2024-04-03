@@ -42,6 +42,10 @@ app.get('/account', (req, res) => {
     res.render('account-page')
 })
 
+app.get('/cart', (req, res) => {
+    res.render('cart')
+})
+
 app.get('/order', (req, res) => {
     res.render('ordering-page')
 })

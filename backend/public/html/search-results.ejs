@@ -54,10 +54,10 @@
 
               <div class="item">
                   <button class="decrement-btn">-</button>
-                  <input type="number" id="quantity1" class="quantity" value="1" min="1">
+                  <input type="number" id="quantity1" class="quantity" value=1 min=1>
                   <button class="increment-btn">+</button>
                   <div>
-                    <button class="add-to-cart-btn" data-item='{"id": 1, "name": "Item 1"}'>Add to Cart</button>
+                    <button class="add-to-cart-btn" data-item='<%= JSON.stringify(row) %>'>Add to Cart</button>
                   </div>
               </div>
 
