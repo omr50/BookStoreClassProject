@@ -34,7 +34,7 @@ module.exports = function(passport) {
     });
 
     passport.deserializeUser((id, done) => {
-    db.query('SELECT user_id, username FROM users WHERE user_id = $1', [parseInt(id, 10)], (err, results) => {
+    db.query('SELECT user_id AS id, username FROM users WHERE user_id = $1', [parseInt(id, 10)], (err, results) => {
         if(err){
         return done(err);
         }

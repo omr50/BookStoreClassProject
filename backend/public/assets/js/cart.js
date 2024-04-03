@@ -12,6 +12,38 @@ function updateStorage(title) {
 
 }
 
+function updateCart(stringifiedCart){
+    // any time we update we want to save to database if authenticated.
+    const isLoggedIn = document.cookie.split('; ').some(cookie => cookie.startsWith('isLoggedIn=true'));
+    console.log("IS AUTH?", isLoggedIn, document.cookie)
+    if (isLoggedIn) {
+        console.log("THAT WAS TRUE")
+        // post the changed cart to backend
+        fetch('/auth/cart', {  // Use the appropriate endpoint
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Include other headers as needed, e.g., for CSRF protection
+        },
+        body: stringifiedCart,  // Send the updated cart as the request body
+        credentials: 'include'  // This is important for including cookies in the request, which might be needed for authentication
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("OKAY RESPONSE!")
+                return response.json();  // Or handle the response in another appropriate way
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+            console.log('Cart updated successfully:', data);
+        })
+        .catch(error => {
+            console.error('Error updating cart:', error);
+        });
+    }
+}
+
 
 const books = getCart();
 console.log("YOUR CART", books)
@@ -96,8 +128,11 @@ books.forEach(row => {
                     console.log('a', cart[key])
                 }
             }
-            localStorage.setItem('cart', JSON.stringify(cart));
-        });
+            const stringifiedCart = JSON.stringify(cart);
+// -----------------------------------------------------------------------------------------------------------------------------
+            localStorage.setItem('cart', stringifiedCart);
+            updateCart(stringifiedCart);
+    });
 
         const decrementButton = element.querySelector('.decrement-btn');
         decrementButton.addEventListener('click', function(event) {
@@ -120,9 +155,11 @@ books.forEach(row => {
                 const itemIndex = cart.findIndex(item => item.title === title);
                 if (itemIndex !== -1) {
                     cart.splice(itemIndex, 1);
-                }
-
-                localStorage.setItem('cart', JSON.stringify(cart));
+            } 
+// -----------------------------------------------------------------------------------------------------------------------------
+                const stringifiedCart = JSON.stringify(cart);
+                localStorage.setItem('cart', stringifiedCart);
+                updateCart(stringifiedCart);
                 console.log("SPLICED")
                 cartEntry.remove();
                 // add a number to the cart based on the length of the cart object.
@@ -154,7 +191,10 @@ books.forEach(row => {
                     console.log('a', cart[key])
                 }
             }
-            localStorage.setItem('cart', JSON.stringify(cart));
+// -----------------------------------------------------------------------------------------------------------------------------
+            const stringifiedCart = JSON.stringify(cart);
+            localStorage.setItem('cart', stringifiedCart);
+            updateCart(stringifiedCart);
         });
 
         const removeFromCartButton = element.querySelector('.remove-from-cart-btn');
@@ -167,7 +207,9 @@ books.forEach(row => {
             const title = cartEntry.querySelector('.book-title').innerText; 
             const cart = getCart();
             const newCart = cart.filter(item => item.title !== title);
-            localStorage.setItem('cart', JSON.stringify(newCart));
+            const stringifiedCart = JSON.stringify(newCart);
+            localStorage.setItem('cart', stringifiedCart);
+            updateCart(stringifiedCart);
             // add a number to the cart based on the length of the cart object.
             cartLink.innerHTML = "cart (" + newCart.length + ")";
         });

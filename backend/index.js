@@ -5,7 +5,7 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs')
 const db = require('./db')
 const passport = require('passport');
-const isAuth = require('./middleware/auth.js')
+const isAuth = require('./middleware/auth.js').isAuth
 // configure passport
 require('./passport/passportSetup.js')(passport)
 
@@ -14,6 +14,8 @@ const app = express();
 app.use(express.static(__dirname + '/public'));
 // allow url-encoded data (from form submissions)
 app.use(express.urlencoded({ extended: true }));
+// allows json parsing and use
+app.use(express.json());
 
 // view engine for dynamic rendering html
 app.set('view engine', 'ejs')

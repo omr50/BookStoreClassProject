@@ -8,4 +8,14 @@ const isAuth = (req, res, next) => {
   next();
 };
 
-module.exports = isAuth;
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next(); // Proceed to the next middleware or route handler
+    }
+    
+    res.redirect('/auth/login');
+
+    res.status(401).send('Unauthorized');
+}
+
+module.exports = {isAuth, ensureAuthenticated};

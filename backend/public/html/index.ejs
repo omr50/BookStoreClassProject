@@ -383,6 +383,16 @@
   </footer><!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<% if (typeof cart !== 'undefined') { %>
+  <script>
+      const cartData = <%- cart %>; // Assuming `cart` is a JSON string
+      if (cartData) {
+          console.log("FINAL CART UPDATED", cartData);
+          localStorage.setItem('cart', JSON.stringify(cartData));
+      }
+  </script>
+<% } %>
+
 
   <%- include('partials/scripts') %>
 

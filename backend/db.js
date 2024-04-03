@@ -25,6 +25,12 @@ const texts = [
         pubyear VARCHAR(255) NOT NULL,
         thumbnail VARCHAR(255),
         price NUMERIC
+      );`,
+      `CREATE TABLE IF NOT EXISTS carts (
+        cart_id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        cart VARCHAR(30000) NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
       );`
       // Add more table creation queries here
 
