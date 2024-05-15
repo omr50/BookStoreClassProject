@@ -36,6 +36,7 @@ app.use(passport.session());
 app.use(isAuth);
 
 const authRoutes = require('./routes/auth/authRoutes.js');
+const { ensureAuthenticated } = require('./middleware/auth.js');
 app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => { 
@@ -57,6 +58,10 @@ app.get('/order', (req, res) => {
 
 app.get('/search', (req, res) => {
     res.render('search-page')
+})
+
+app.get('/address', (req, res) => {
+    res.render('address-page')
 })
 
 // app.get('/search-results', async (req, res) => {
@@ -180,10 +185,13 @@ paypal.configure({
   'client_secret': process.env.CLIENT_SECRET
 });
 
+// may change this to be authenticated
 app.post('/pay', (req, res) => {
     const cartData = JSON.parse(req.body.cartData);
-    const items = []
-    const total = 0;
+    const address = req.body.address + ' ' + req.body.city;
+    console.log(address);
+    let items = []
+    let total = 0;
     for (let item of cartData) {
       let currItem = {}
       currItem.name = item.title;
@@ -191,7 +199,10 @@ app.post('/pay', (req, res) => {
       currItem.price = item.price;
       currItem.currency = "USD";
       currItem.quantity = item.quantity; 
+      currItem.address = address;
+      total += parseFloat(item.price) * item.quantity;
     }
+    total = total.toFixed(2);
     console.log("CART DATA", cartData);
     const create_payment_json = {
       "intent": "sale",
@@ -204,31 +215,30 @@ app.post('/pay', (req, res) => {
       },
       "transactions": [{
           "item_list": {
-              "items": [{
-                  "name": "Red Sox Hat",
-                  "sku": "001",
-                  "price": "25.00",
-                  "currency": "USD",
-                  "quantity": 1
-              }]
+              "items": items
           },
           "amount": {
               "currency": "USD",
-              "total": "25.00"
+              "total": total
           },
           "description": "Customer Order"
       }]
   };
-  app.get('/success', (req, res) => {
+
+  // CREATE THE ORDER IN HERE. USE THE USER INFO SUPPLIED IN THE
+  // POST REQUEST. ADD IT TO THEIR ACCOUNT AND THE TRANSACTION DATE
+  // AND PAYMENT ID FOR THEIR REFERENCE. DO THAT INSIDE THE execute part
+  // AFTER SUCCESS (no error)
+  app.get('/success', ensureAuthenticated, (req, res) => {
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
-  
+    console.log("SUCCESS< GET REQ QUERY", req.query)
     const execute_payment_json = {
       "payer_id": payerId,
       "transactions": [{
           "amount": {
               "currency": "USD",
-              "total": "25.00"
+              "total": total
           }
       }]
     };
@@ -239,7 +249,25 @@ app.post('/pay', (req, res) => {
           throw error;
       } else {
           console.log(JSON.stringify(payment));
-          res.send('Success');
+          // Gathered Order Info
+          let orderInfo = {};
+          orderInfo.userId = req.user.id;
+          orderInfo.paypalTransactionId = paymentId;
+          // order id will be added later as a unique key
+          orderInfo.cart = JSON.stringify(cartData);
+          orderInfo.total = total;
+          orderInfo.address = address;
+          new Promise((resolve, reject) => {
+          db.query('INSERT INTO orders (user_id, cart, paypal_transaction_id, total, address) VALUES ($1, $2, $3, $4, $5)', [orderInfo.userId, orderInfo.cart, orderInfo.paypalTransactionId, orderInfo.total, orderInfo.address], (err, result) => {
+              if (err) {
+                  reject(err);
+              } else {
+                  resolve(result.rows);
+            }
+          }) 
+        })
+
+        res.render('order-page', { orderInfo, cartData })
       }
   });
   });

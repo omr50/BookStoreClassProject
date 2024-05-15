@@ -31,6 +31,15 @@ const texts = [
         user_id INT NOT NULL,
         cart VARCHAR(30000) NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );`,
+      `CREATE TABLE IF NOT EXISTS orders (
+        order_id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL,
+        cart VARCHAR(30000) NOT NULL,
+        paypal_transaction_id VARCHAR(30000) NOT NULL,
+        total FLOAT NOT NULL,
+        address VARCHAR(30000) NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
       );`
       // Add more table creation queries here
 
