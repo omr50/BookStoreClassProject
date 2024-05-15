@@ -43,9 +43,14 @@
     </div>
     <div class="checkout-button-div">
     <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-      <a href="/auth/checkout"><button class="checkout-btn">Checkout</button></a>
+      <button id="checkout-btn">Checkout</button>
     <% } %>
   </div>
+
+  <form id="paymentForm" action="/pay" method="post">
+    <input type="hidden" id="cartData" name="cartData">
+    <input type="submit" value="Buy">
+  </form>
 </section>
 
 
@@ -128,6 +133,7 @@
   <script src="../assets/js/main.js"></script>
   <script src="../assets/js/cart.js"></script>
 
+  <%- include('partials/footer') %>
 </body>
 
 <

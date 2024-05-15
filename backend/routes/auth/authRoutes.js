@@ -76,8 +76,13 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/auth/l
         // handle session save error
       }
       const isAuthenticated = true; 
-      cartData = JSON.stringify(dbCart);
-      res.render('index', { cartData, isAuthenticated });  // Render after saving session
+      if (rows.length !== 0) {
+        cartData = dbCart;
+      }
+      cartData = JSON.stringify(cartData)
+      res.cookie('cart', cartData, { maxAge: 24 * 60 * 60 * 1000 });
+      console.log("RIGHT BEFORE SEND", cartData)
+      res.render('index', { isAuthenticated });  // Render after saving session
     });
     // we will have a script tag in which we use ejs to update the cart data dynamically.
   }
@@ -168,6 +173,31 @@ router.post('/cart', ensureAuthenticated, async (req, res) => {
 
     res.status(200).json({});
 })
+
+// Route to get the cart data
+router.get('/cart', ensureAuthenticated, async (req, res) => {
+  try {
+    const result = await new Promise((resolve, reject) => {
+      db.query('SELECT cart FROM carts WHERE user_id = $1', [req.user.id], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.rows);
+        }
+      });
+    });
+
+    if (result.length > 0) {
+      const cart = result[0].cart;
+      res.status(200).json({ cart });
+    } else {
+      res.status(404).json({ message: 'Cart not found' });
+    }
+  } catch (error) {
+    console.error("Error fetching cart data:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 router.get('/checkout', (req, res) => {

@@ -211,8 +211,8 @@ button[type="submit"]:hover {
   overflow: hidden;
   text-overflow:ellipsis;
   margin: 10px 0;
-  font-size: 1.2em;
-  line-height: 1.2em; /* Added line-height */
+  font-size: 2vh;
+  line-height: 2vh; /* Added line-height */
   height: 3.2em; /* Adjusted height */
 }
 .cart-entry img {

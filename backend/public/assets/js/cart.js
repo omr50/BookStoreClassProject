@@ -47,6 +47,37 @@ function updateCart(cart){
     }
 }
 
+// if the user is logged in then first fetch the most updated cart
+// from the backend.
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Fetch cart data after the user logs in
+  fetch('/auth/cart', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include' // Include cookies for authentication
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Fetched cart data:", data);
+    if (data.cart) {
+      // Parse the cart data from string to JSON object
+      var parsedCartData = JSON.parse(data.cart);
+      // Store the stringified version in localStorage
+      localStorage.setItem('cart', JSON.stringify(parsedCartData));
+    }
+  })
+  .catch(error => {
+    console.error("Error fetching cart data:", error);
+  });
+});
 
 const books = getCart();
 console.log("YOUR CART", books)
@@ -188,12 +219,29 @@ books.forEach(row => {
             
             // so given the title element, we can access the correct element and update the quantity.
             const cart = getCart();
-            for (let key in cart) {
-                if (cart[key].title === title) {
-                    cart[key].quantity -= 1;
-                    console.log('a', cart[key])
+            // for (let key in cart) {
+            //     if (cart[key].title === title) {
+            //         cart[key].quantity -= 1;
+            //         console.log('a', cart[key])
+            //     }
+            // }
+            for (let i = 0; i < cart.length; i++) {
+                if (cart[i].title === title) {
+                cart[i].quantity -= 1;
+                console.log('Updated item:', cart[i]);
+
+                // Remove the item if its quantity is zero
+                if (cart[i].quantity <= 0) {
+                    cart.splice(i, 1);
+                    const cartEntry = decrementButton.closest('.cart-entry');
+                    // remove from cart
+                    cartEntry.remove();
+                }
+
+                break;
                 }
             }
+
 // -----------------------------------------------------------------------------------------------------------------------------
             const stringifiedCart = JSON.stringify(cart);
             localStorage.setItem('cart', stringifiedCart);
@@ -236,7 +284,7 @@ const totalElement =     `<div class="cart-entry">
                 </div>
 
                 <div class="fifth-col">
-                    <h3 class="text-primary total-cost">$${totalCost}</h3>
+                    <h3 class="text-primary total-cost">$${totalCost.toFixed(2)}</h3>
                 </div>
             </div>`
     totalDiv.innerHTML = totalElement;
@@ -245,4 +293,60 @@ const totalElement =     `<div class="cart-entry">
 
 
 
+// add a number to the cart based on the length of the cart object.
+const cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartLink = document.querySelector('.cart-link');
+cartLink.innerHTML = "cart (" + cart.length + ")";
 
+
+// document.getElementById('checkout-btn').addEventListener('click', async () => {
+//     console.log("Clicked")
+//     // Get the cart data from local storage
+//     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+//     // Check if the cart is not empty
+//     if (cart.length === 0) {
+//         alert('Your cart is empty.');
+//         return;
+//     }
+
+//     // Create the payload to send to the server
+//     const payload = {
+//         items: cart
+//     };
+
+//     try {
+//         console.log("Fetch")
+//         const response = await fetch('/pay', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(payload)
+//         });
+
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+
+//         const result = await response.json();
+//         window.location.href = result.redirectUrl;
+//     } catch (error) {
+//         console.error('Error:', error);
+//     }
+// });
+
+
+document.getElementById('paymentForm').addEventListener('submit', function(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Get cart data from local storage
+    const cart = localStorage.getItem('cart') || JSON.stringify([]);
+
+    // Set the hidden input field with cart data
+    document.getElementById('cartData').value = cart;
+    console.log("cart", cart, typeof cart);
+    // Submit the form manually
+    this.submit();
+});

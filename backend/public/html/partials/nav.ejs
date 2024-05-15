@@ -40,7 +40,7 @@
           </li>
           <li><a class="nav-link scrollto cart-link" href="/cart">Cart</a></li>
             <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-            <li><a class="nav-link scrollto" href="/auth/logout">Logout</a></li>
+            <li id="logoutButton"><a class="nav-link scrollto" href="/auth/logout">Logout</a></li>
             <% } else { %>
             <li><a class="nav-link scrollto" href="/auth/signup">Signup</a></li>
             <li><a class="nav-link scrollto" href="/auth/login">Login</a></li>

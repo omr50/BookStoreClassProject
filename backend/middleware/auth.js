@@ -14,8 +14,6 @@ function ensureAuthenticated(req, res, next) {
     }
     
     res.redirect('/auth/login');
-
-    res.status(401).send('Unauthorized');
 }
 
 module.exports = {isAuth, ensureAuthenticated};
